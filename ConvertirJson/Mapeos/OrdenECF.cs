@@ -128,11 +128,33 @@ namespace ConvertirJson.Mapeos
         public string TotalITBIS2 { get; set; }
         public string TotalITBIS3 { get; set; }
         public string MontoImpuestoAdicional { get; set; }
+
+
         public string TipoImpuesto1 { get; set; }
         public string TasaImpuestoAdicional1 { get; set; }
         public string MontoImpuestoSelectivoConsumoEspecifico1 { get; set; }
         public string MontoImpuestoSelectivoConsumoAdvalorem1 { get; set; }
         public string OtrosImpuestosAdicionales1 { get; set; }
+
+        public string TipoImpuesto2 { get; set; }
+        public string TasaImpuestoAdicional2 { get; set; }
+        public string MontoImpuestoSelectivoConsumoEspecifico2 { get; set; }
+        public string MontoImpuestoSelectivoConsumoAdvalorem2 { get; set; }
+        public string OtrosImpuestosAdicionales2 { get; set; }
+
+        public string TipoImpuesto3 { get; set; }
+        public string TasaImpuestoAdicional3 { get; set; }
+        public string MontoImpuestoSelectivoConsumoEspecifico3 { get; set; }
+        public string MontoImpuestoSelectivoConsumoAdvalorem3 { get; set; }
+        public string OtrosImpuestosAdicionales3 { get; set; }
+
+        public string TipoImpuesto4 { get; set; }
+        public string TasaImpuestoAdicional4 { get; set; }
+        public string MontoImpuestoSelectivoConsumoEspecifico4 { get; set; }
+        public string MontoImpuestoSelectivoConsumoAdvalorem4 { get; set; }
+        public string OtrosImpuestosAdicionales4 { get; set; }
+
+
         public string MontoTotal { get; set; }
         public string MontoNoFacturable { get; set; }
         public string MontoPeriodo { get; set; }
@@ -155,7 +177,33 @@ namespace ConvertirJson.Mapeos
         public string TotalITBIS2OtraMoneda { get; set; }
         public string TotalITBIS3OtraMoneda { get; set; }
         public string MontoImpuestoAdicionalOtraMoneda { get; set; }
+
+        public string TipoImpuestoOtraMoneda1 { get; set; }
+        public string TasaImpuestoAdicionalOtraMoneda1 { get; set; }
+        public string MontoImpuestoSelectivoConsumoEspecificoOtraMoneda1 { get; set; }
+        public string MontoImpuestoSelectivoConsumoAdvaloremOtraMoneda1 { get; set; }
+        public string OtrosImpuestosAdicionalesOtraMoneda1 { get; set; }
+
+        public string TipoImpuestoOtraMoneda2 { get; set; }
+        public string TasaImpuestoAdicionalOtraMoneda2 { get; set; }
+        public string MontoImpuestoSelectivoConsumoEspecificoOtraMoneda2 { get; set; }
+        public string MontoImpuestoSelectivoConsumoAdvaloremOtraMoneda2 { get; set; }
+        public string OtrosImpuestosAdicionalesOtraMoneda2 { get; set; }
+
+        public string TipoImpuestoOtraMoneda3 { get; set; }
+        public string TasaImpuestoAdicionalOtraMoneda3 { get; set; }
+        public string MontoImpuestoSelectivoConsumoEspecificoOtraMoneda3 { get; set; }
+        public string MontoImpuestoSelectivoConsumoAdvaloremOtraMoneda3 { get; set; }
+        public string OtrosImpuestosAdicionalesOtraMoneda3 { get; set; }
+        public string TipoImpuestoOtraMoneda4 { get; set; }
+        public string TasaImpuestoAdicionalOtraMoneda4 { get; set; }
+        public string MontoImpuestoSelectivoConsumoEspecificoOtraMoneda4 { get; set; }
+
+        public string MontoImpuestoSelectivoConsumoAdvaloremOtraMoneda4 { get; set; }
+        public string OtrosImpuestosAdicionalesOtraMoneda4 { get; set; }
         public string MontoTotalOtraMoneda { get; set; }
-        public List<Items> Detalles { get; set; } = new List<Items>();
+
+        //Numero de cada linea
+        public List<Items> Detalle { get; set; } = new List<Items>();
     }
 }
