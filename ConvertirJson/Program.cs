@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System.Xml;
 using ConvertirJson;
 using OfficeOpenXml;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 class Program
 {
@@ -19,44 +20,39 @@ class Program
 
         try
         {
-            // Convertir JSON en un objeto JToken
-            JToken jsonToken = JToken.Parse(json);
+            // Convertir JSON en un objeto JArray
+            JArray jsonArray = JArray.Parse(json);
 
-            // Filtrar los valores que sean "#e"
-            jsonToken = FilterJson(jsonToken);
-
-            XmlDocument xmlDoc;
-
-            // Verificar si el JSON es un array
-            if (jsonToken is JArray)
+            int contador = 1;
+            foreach (var item in jsonArray)
             {
-                // Si es un array, lo envolvemos en un objeto con un nodo ráiz
-                JObject rootObject = new JObject { ["Encabezado"] = jsonToken };
-                xmlDoc = JsonConvert.DeserializeXmlNode(rootObject.ToString(), "ECF");
+                // Filtrar los valores "#e" y eliminar "Detalle"
+                var filteredItem = FilterJson(item);
+                if (filteredItem.IsNullOrEmpty()) continue;
+
+                // Crear objeto raíz por cada encabezado
+                JObject root = new JObject { ["Encabezado"] = filteredItem };
+
+                // Convertir a XML
+                XmlDocument xmlDoc = JsonConvert.DeserializeXmlNode(root.ToString(), "ECF");
+
+                // Formatear XML con indentación
+                using (var stringWriter = new StringWriter())
+                using (var xmlTextWriter = new XmlTextWriter(stringWriter))
+                {
+                    xmlTextWriter.Formatting = System.Xml.Formatting.Indented;
+                    xmlDoc.WriteTo(xmlTextWriter);
+                    string formattedXml = stringWriter.ToString();
+
+                    string xmlFilePath = $@"C:\\Users\\Carlo\\OneDrive\\Escritorio\\ProcesoCert_{contador}.xml";
+                    File.WriteAllText(xmlFilePath, formattedXml);
+                    Console.WriteLine($"Archivo generado: {xmlFilePath}");
+                }
+
+                contador++;
             }
-            else
-            {
-                // Si es un objeto normal, lo convertimos directamente
-                xmlDoc = JsonConvert.DeserializeXmlNode(jsonToken.ToString(), "ECF");
-            }
 
-            string xmlFilePath = @"C:\\Users\\Carlo\\OneDrive\\Escritorio\\ProcesoCert.xml";
-
-            // Formatear el XML con sangría y cada etiqueta en una línea
-            using (var stringWriter = new StringWriter())
-            using (var xmlTextWriter = new XmlTextWriter(stringWriter))
-            {
-                xmlTextWriter.Formatting = System.Xml.Formatting.Indented;
-                xmlDoc.WriteTo(xmlTextWriter);
-                string formattedXml = stringWriter.ToString();
-
-                // Guardar el XML formateado en un archivo
-                File.WriteAllText(xmlFilePath, formattedXml);
-
-                Console.WriteLine("Archivo XML generado correctamente.");
-                Console.WriteLine("Contenido del archivo XML:");
-                Console.WriteLine(formattedXml);
-            }
+            Console.WriteLine("Todos los archivos XML fueron generados correctamente.");
         }
         catch (Exception ex)
         {
@@ -71,7 +67,8 @@ class Program
             JObject obj = (JObject)token.DeepClone();
             foreach (var property in obj.Properties().ToList())
             {
-                if (property.Value.Type == JTokenType.String && property.Value.ToString() == "#e")
+                if ((property.Value.Type == JTokenType.String && property.Value.ToString() == "#e") ||
+                    property.Name == "Detalle" || property.Name == "Orden" || property.Name == "CasoPrueba")
                 {
                     property.Remove();
                 }
