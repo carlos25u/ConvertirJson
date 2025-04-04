@@ -11,41 +11,48 @@ namespace ConvertirJson
 {
     internal class Utils
     {
-
-
-
         public static DataTable WorksheetToDataTable(ExcelWorksheet worksheet)
         {
-            DataTable dt = new DataTable();
+            DataTable table = new DataTable();
+            int colCount = worksheet.Dimension.End.Column;
+            int rowCount = worksheet.Dimension.End.Row;
 
-            if (worksheet?.Dimension == null)
-                return dt; // Retornar tabla vacía si la hoja está vacía
+            HashSet<string> columnNames = new HashSet<string>();
 
-            int columns = worksheet.Dimension.End.Column;
-            int rows = worksheet.Dimension.End.Row;
-
-            // Agregar columnas al DataTable (usando la primera fila como encabezado)
-            for (int col = 1; col <= columns; col++)
+            // Leer encabezados (primera fila)
+            for (int col = 1; col <= colCount; col++)
             {
-                string columnName = worksheet.Cells[1, col].Value?.ToString().Trim() ?? $"Column{col}";
-                dt.Columns.Add(columnName);
-            }
+                string columnName = worksheet.Cells[1, col].Text.Trim();
 
-            // Agregar filas al DataTable (desde la segunda fila en adelante)
-            for (int row = 2; row <= rows; row++)
-            {
-                DataRow newRow = dt.NewRow();
-                for (int col = 1; col <= columns; col++)
+                // Si está vacío, asignar un nombre único
+                if (string.IsNullOrEmpty(columnName))
                 {
-                    newRow[col - 1] = worksheet.Cells[row, col].Value?.ToString().Trim() ?? string.Empty;
+                    columnName = "Column_" + col;
                 }
-                dt.Rows.Add(newRow);
+
+                // Si el nombre ya existe, agregar un sufijo
+                while (columnNames.Contains(columnName))
+                {
+                    columnName += "_dup";
+                }
+                columnNames.Add(columnName);
+
+                table.Columns.Add(columnName);
             }
 
-            return dt;
+            // Leer datos (desde la segunda fila)
+            for (int row = 2; row <= rowCount; row++)
+            {
+                DataRow newRow = table.NewRow();
+                for (int col = 1; col <= colCount; col++)
+                {
+                    newRow[col - 1] = worksheet.Cells[row, col].Text;
+                }
+                table.Rows.Add(newRow);
+            }
+
+            return table;
         }
-
-
 
 
         public static List<OrdenECF> CargarDatosDesdeExcel(string filePath)
@@ -446,7 +453,8 @@ namespace ConvertirJson
                         });
 
                     columnasInicio += columnasPorItem; // Aumentar el índice de columnas para el siguiente item
-                };
+                }
+                ;
 
                 // Agregar la orden a la lista
                 ordenes.Add(orden);

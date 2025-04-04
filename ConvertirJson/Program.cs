@@ -13,7 +13,8 @@ class Program
     {
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-        string rutaExcel = @"C:\\Users\\Carlo\\OneDrive\\Escritorio\\ProcesoCert.xlsx";
+        //string rutaExcel = @"C:\\Users\\Carlo\\OneDrive\\Escritorio\\ProcesoCert.xlsx";
+        string rutaExcel = "/Users/jhonalbert/Downloads/ProcesoCert.xlsx";
         var lista = Utils.CargarDatosDesdeExcel(rutaExcel);
 
         string json = JsonConvert.SerializeObject(lista, Newtonsoft.Json.Formatting.Indented);
@@ -44,7 +45,10 @@ class Program
                     xmlDoc.WriteTo(xmlTextWriter);
                     string formattedXml = stringWriter.ToString();
 
-                    string xmlFilePath = $@"C:\\Users\\Carlo\\OneDrive\\Escritorio\\ProcesoCert_{contador}.xml";
+                    // string ruta = @"C:\\Users\\Carlo\\OneDrive\\Escritorio\\XmlGenerados";
+                    string ruta = @"/Users/jhonalbert/Downloads/XmlGenerados";
+                    string nombreArchivo = $"ProcesoCert_{contador}";
+                    string xmlFilePath = Path.Combine(ruta, $"{nombreArchivo}.xml");
                     File.WriteAllText(xmlFilePath, formattedXml);
                     Console.WriteLine($"Archivo generado: {xmlFilePath}");
                 }
