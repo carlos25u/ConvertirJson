@@ -2,324 +2,382 @@
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ConvertirJson
 {
     internal class Utils
     {
+
+
+
+        public static DataTable WorksheetToDataTable(ExcelWorksheet worksheet)
+        {
+            DataTable dt = new DataTable();
+
+            if (worksheet?.Dimension == null)
+                return dt; // Retornar tabla vacía si la hoja está vacía
+
+            int columns = worksheet.Dimension.End.Column;
+            int rows = worksheet.Dimension.End.Row;
+
+            // Agregar columnas al DataTable (usando la primera fila como encabezado)
+            for (int col = 1; col <= columns; col++)
+            {
+                string columnName = worksheet.Cells[1, col].Value?.ToString().Trim() ?? $"Column{col}";
+                dt.Columns.Add(columnName);
+            }
+
+            // Agregar filas al DataTable (desde la segunda fila en adelante)
+            for (int row = 2; row <= rows; row++)
+            {
+                DataRow newRow = dt.NewRow();
+                for (int col = 1; col <= columns; col++)
+                {
+                    newRow[col - 1] = worksheet.Cells[row, col].Value?.ToString().Trim() ?? string.Empty;
+                }
+                dt.Rows.Add(newRow);
+            }
+
+            return dt;
+        }
+
+
+
+
         public static List<OrdenECF> CargarDatosDesdeExcel(string filePath)
         {
             var ordenes = new List<OrdenECF>();
 
             // Cargar el archivo Excel
             FileInfo fileInfo = new FileInfo(filePath);
-            using (var package = new ExcelPackage(fileInfo))
+            // Seleccionar la primera hoja de trabajo
+            DataTable dt = new DataTable();
+
+            using (ExcelPackage package = new ExcelPackage(new FileInfo(filePath)))
             {
-                // Seleccionar la primera hoja de trabajo
                 ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-
-                // Iterar sobre las filas del Excel, comenzando en la segunda fila (la primera fila puede ser la cabecera)
-                for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
-                {
-                    var orden = new OrdenECF
-                    {
-                        Orden = worksheet.Cells[row, 1].Text,
-                        CasoPrueba = worksheet.Cells[row, 2].Text,
-                        Version = worksheet.Cells[row, 3].Text,
-                        TipoeCF = worksheet.Cells[row, 4].Text,
-                        ENCF = worksheet.Cells[row, 5].Text,
-                        FechaVencimientoSecuencia = worksheet.Cells[row, 6].Text,
-                        IndicadorNotaCredito = worksheet.Cells[row, 7].Text,
-                        IndicadorEnvioDiferido = worksheet.Cells[row, 8].Text,
-                        IndicadorMontoGravado = worksheet.Cells[row, 9].Text,
-                        TipoIngresos = worksheet.Cells[row, 10].Text,
-                        TipoPago = worksheet.Cells[row, 11].Text,
-                        FechaLimitePago = worksheet.Cells[row, 12].Text,
-                        TerminoPago = worksheet.Cells[row, 13].Text,
-                        FormaPago1 = worksheet.Cells[row, 14].Text,
-                        MontoPago1 = worksheet.Cells[row, 15].Text,
-                        FormaPago2 = worksheet.Cells[row, 16].Text,
-                        MontoPago2 = worksheet.Cells[row, 17].Text,
-                        FormaPago3 = worksheet.Cells[row, 18].Text,
-                        MontoPago3 = worksheet.Cells[row, 19].Text,
-                        FormaPago4 = worksheet.Cells[row, 20].Text,
-                        MontoPago4 = worksheet.Cells[row, 21].Text,
-                        FormaPago5 = worksheet.Cells[row, 22].Text,
-                        MontoPago5 = worksheet.Cells[row, 23].Text,
-                        FormaPago6 = worksheet.Cells[row, 24].Text,
-                        MontoPago6 = worksheet.Cells[row, 25].Text,
-                        FormaPago7 = worksheet.Cells[row, 26].Text,
-                        MontoPago7 = worksheet.Cells[row, 27].Text,
-                        TipoCuentaPago = worksheet.Cells[row, 28].Text,
-                        NumeroCuentaPago = worksheet.Cells[row, 29].Text,
-                        BancoPago = worksheet.Cells[row, 30].Text,
-                        FechaDesde = worksheet.Cells[row, 31].Text,
-                        FechaHasta = worksheet.Cells[row, 32].Text,
-                        TotalPaginas = worksheet.Cells[row, 33].Text,
-                        RNCEmisor = worksheet.Cells[row, 34].Text,
-                        RazonSocialEmisor = worksheet.Cells[row, 35].Text,
-                        NombreComercial = worksheet.Cells[row, 36].Text,
-                        Sucursal = worksheet.Cells[row, 37].Text,
-                        DireccionEmisor = worksheet.Cells[row, 38].Text,
-                        Municipio = worksheet.Cells[row, 39].Text,
-                        Provincia = worksheet.Cells[row, 40].Text,
-                        TelefonoEmisor1 = worksheet.Cells[row, 41].Text,
-                        TelefonoEmisor2 = worksheet.Cells[row, 42].Text,
-                        TelefonoEmisor3 = worksheet.Cells[row, 43].Text,
-                        CorreoEmisor = worksheet.Cells[row, 44].Text,
-                        WebSite = worksheet.Cells[row, 45].Text,
-                        ActividadEconomica = worksheet.Cells[row, 46].Text,
-                        CodigoVendedor = worksheet.Cells[row, 47].Text,
-                        NumeroFacturaInterna = worksheet.Cells[row, 48].Text,
-                        NumeroPedidoInterno = worksheet.Cells[row, 49].Text,
-                        ZonaVenta = worksheet.Cells[row, 50].Text,
-                        RutaVenta = worksheet.Cells[row, 51].Text,
-                        InformacionAdicionalEmisor = worksheet.Cells[row, 52].Text,
-                        FechaEmision = worksheet.Cells[row, 53].Text,
-                        RNCComprador = worksheet.Cells[row, 54].Text,
-                        IdentificadorExtranjero = worksheet.Cells[row, 55].Text,
-                        RazonSocialComprador = worksheet.Cells[row, 56].Text,
-                        ContactoComprador = worksheet.Cells[row, 57].Text,
-                        CorreoComprador = worksheet.Cells[row, 58].Text,
-                        DireccionComprador = worksheet.Cells[row, 59].Text,
-                        MunicipioComprador = worksheet.Cells[row, 60].Text,
-                        ProvinciaComprador = worksheet.Cells[row, 61].Text,
-                        PaisComprador = worksheet.Cells[row, 62].Text,
-                        FechaEntrega = worksheet.Cells[row, 63].Text,
-                        ContactoEntrega = worksheet.Cells[row, 64].Text,
-                        DireccionEntrega = worksheet.Cells[row, 65].Text,
-                        TelefonoAdicional = worksheet.Cells[row, 66].Text,
-                        FechaOrdenCompra = worksheet.Cells[row, 67].Text,
-                        NumeroOrdenCompra = worksheet.Cells[row, 68].Text,
-                        CodigoInternoComprador = worksheet.Cells[row, 69].Text,
-                        ResponsablePago = worksheet.Cells[row, 70].Text,
-                        InformacionAdicionalComprador = worksheet.Cells[row, 71].Text,
-                        FechaEmbarque = worksheet.Cells[row, 72].Text,
-                        NumeroEmbarque = worksheet.Cells[row, 73].Text,
-                        NumeroContenedor = worksheet.Cells[row, 74].Text,
-                        NumeroReferencia = worksheet.Cells[row, 75].Text,
-                        NombrePuertoEmbarque = worksheet.Cells[row, 76].Text,
-                        CondicionesEntrega = worksheet.Cells[row, 77].Text,
-                        TotalFob = worksheet.Cells[row, 78].Text,
-                        Seguro = worksheet.Cells[row, 79].Text,
-                        Flete = worksheet.Cells[row, 80].Text,
-                        OtrosGastos = worksheet.Cells[row, 81].Text,
-                        TotalCif = worksheet.Cells[row, 82].Text,
-                        RegimenAduanero = worksheet.Cells[row, 83].Text,
-                        NombrePuertoSalida = worksheet.Cells[row, 84].Text,
-                        NombrePuertoDesembarque = worksheet.Cells[row, 85].Text,
-                        PesoBruto = worksheet.Cells[row, 86].Text,
-                        PesoNeto = worksheet.Cells[row, 87].Text,
-                        UnidadPesoBruto = worksheet.Cells[row, 88].Text,
-                        UnidadPesoNeto = worksheet.Cells[row, 89].Text,
-                        CantidadBulto = worksheet.Cells[row, 90].Text,
-                        UnidadBulto = worksheet.Cells[row, 91].Text,
-                        VolumenBulto = worksheet.Cells[row, 92].Text,
-                        UnidadVolumen = worksheet.Cells[row, 93].Text,
-                        ViaTransporte = worksheet.Cells[row, 94].Text,
-                        PaisOrigen = worksheet.Cells[row, 95].Text,
-                        DireccionDestino = worksheet.Cells[row, 96].Text,
-                        PaisDestino = worksheet.Cells[row, 97].Text,
-                        RNCIdentificacionCompaniaTransportista = worksheet.Cells[row, 98].Text,
-                        NombreCompaniaTransportista = worksheet.Cells[row, 99].Text,
-                        NumeroViaje = worksheet.Cells[row, 100].Text,
-                        Conductor = worksheet.Cells[row, 101].Text,
-                        DocumentoTransporte = worksheet.Cells[row, 102].Text,
-                        Ficha = worksheet.Cells[row, 103].Text,
-                        Placa = worksheet.Cells[row, 104].Text,
-                        RutaTransporte = worksheet.Cells[row, 105].Text,
-                        ZonaTransporte = worksheet.Cells[row, 106].Text,
-                        NumeroAlbaran = worksheet.Cells[row, 107].Text,
-                        MontoGravadoTotal = worksheet.Cells[row, 108].Text,
-                        MontoGravadoI1 = worksheet.Cells[row, 109].Text,
-                        MontoGravadoI2 = worksheet.Cells[row, 110].Text,
-                        MontoGravadoI3 = worksheet.Cells[row, 111].Text,
-                        MontoExento = worksheet.Cells[row, 112].Text,
-                        ITBIS1 = worksheet.Cells[row, 113].Text,
-                        ITBIS2 = worksheet.Cells[row, 114].Text,
-                        ITBIS3 = worksheet.Cells[row, 115].Text,
-                        TotalITBIS = worksheet.Cells[row, 116].Text,
-                        TotalITBIS1 = worksheet.Cells[row, 117].Text,
-                        TotalITBIS2 = worksheet.Cells[row, 118].Text,
-                        TotalITBIS3 = worksheet.Cells[row, 119].Text,
-                        MontoImpuestoAdicional = worksheet.Cells[row, 120].Text,
-                        //hasta aqui esta bien
-
-                        TipoImpuesto1 = worksheet.Cells[row, 121].Text,
-                        TasaImpuestoAdicional1 = worksheet.Cells[row, 122].Text,
-                        MontoImpuestoSelectivoConsumoEspecifico1 = worksheet.Cells[row, 123].Text,
-                        MontoImpuestoSelectivoConsumoAdvalorem1 = worksheet.Cells[row, 124].Text,
-                        OtrosImpuestosAdicionales1 = worksheet.Cells[row, 125].Text,
-
-                        TipoImpuesto2 = worksheet.Cells[row, 126].Text,
-                        TasaImpuestoAdicional2 = worksheet.Cells[row, 127].Text,
-                        MontoImpuestoSelectivoConsumoEspecifico2 = worksheet.Cells[row, 128].Text,
-                        MontoImpuestoSelectivoConsumoAdvalorem2 = worksheet.Cells[row, 129].Text,
-                        OtrosImpuestosAdicionales2 = worksheet.Cells[row, 130].Text,
-
-                        TipoImpuesto3 = worksheet.Cells[row, 131].Text,
-                        TasaImpuestoAdicional3 = worksheet.Cells[row, 132].Text,
-                        MontoImpuestoSelectivoConsumoEspecifico3 = worksheet.Cells[row, 133].Text,
-                        MontoImpuestoSelectivoConsumoAdvalorem3 = worksheet.Cells[row, 134].Text,
-                        OtrosImpuestosAdicionales3 = worksheet.Cells[row, 135].Text,
-
-                        TipoImpuesto4 = worksheet.Cells[row, 136].Text,
-                        TasaImpuestoAdicional4 = worksheet.Cells[row, 137].Text,
-                        MontoImpuestoSelectivoConsumoEspecifico4 = worksheet.Cells[row, 138].Text,
-                        MontoImpuestoSelectivoConsumoAdvalorem4 = worksheet.Cells[row, 139].Text,
-                        OtrosImpuestosAdicionales4 = worksheet.Cells[row, 140].Text,
+                dt = WorksheetToDataTable(worksheet);
 
 
-                        MontoTotal = worksheet.Cells[row, 141].Text,
-                        MontoNoFacturable = worksheet.Cells[row, 142].Text,
-                        MontoPeriodo = worksheet.Cells[row, 143].Text,
-                        SaldoAnterior = worksheet.Cells[row, 144].Text,
-                        MontoAvancePago = worksheet.Cells[row, 145].Text,
-                        ValorPagar = worksheet.Cells[row, 146].Text,
-                        TotalITBISRetenido = worksheet.Cells[row, 147].Text,
-                        TotalISRRetencion = worksheet.Cells[row, 148].Text,
-                        TotalITBISPercepcion = worksheet.Cells[row, 149].Text,
-                        TotalISRPercepcion = worksheet.Cells[row, 150].Text,
-                        TipoMoneda = worksheet.Cells[row, 151].Text,
-                        TipoCambio = worksheet.Cells[row, 152].Text,
-
-                        MontoGravadoTotalOtraMoneda = worksheet.Cells[row, 153].Text,
-                        MontoGravado1OtraMoneda = worksheet.Cells[row, 154].Text,
-                        MontoGravado2OtraMoneda = worksheet.Cells[row, 155].Text,
-                        MontoGravado3OtraMoneda = worksheet.Cells[row, 156].Text,
-                        MontoExentoOtraMoneda = worksheet.Cells[row, 157].Text,
-
-                        TotalITBISOtraMoneda = worksheet.Cells[row, 158].Text,
-                        TotalITBIS1OtraMoneda = worksheet.Cells[row, 159].Text,
-                        TotalITBIS2OtraMoneda = worksheet.Cells[row, 160].Text,
-                        TotalITBIS3OtraMoneda = worksheet.Cells[row, 161].Text,
-                        MontoImpuestoAdicionalOtraMoneda = worksheet.Cells[row, 162].Text,
-
-                        TipoImpuestoOtraMoneda1 = worksheet.Cells[row, 163].Text,
-                        TasaImpuestoAdicionalOtraMoneda1 = worksheet.Cells[row, 164].Text,
-                        MontoImpuestoSelectivoConsumoEspecificoOtraMoneda1 = worksheet.Cells[row, 165].Text,
-                        MontoImpuestoSelectivoConsumoAdvaloremOtraMoneda1 = worksheet.Cells[row, 166].Text,
-                        OtrosImpuestosAdicionalesOtraMoneda1 = worksheet.Cells[row, 167].Text,
-
-                        TipoImpuestoOtraMoneda2 = worksheet.Cells[row, 168].Text,
-                        TasaImpuestoAdicionalOtraMoneda2 = worksheet.Cells[row, 169].Text, //hasta aqui
-                        MontoImpuestoSelectivoConsumoEspecificoOtraMoneda2 = worksheet.Cells[row, 170].Text,
-                        MontoImpuestoSelectivoConsumoAdvaloremOtraMoneda2 = worksheet.Cells[row, 171].Text,
-                        OtrosImpuestosAdicionalesOtraMoneda2 = worksheet.Cells[row, 172].Text,
-
-                        TipoImpuestoOtraMoneda3 = worksheet.Cells[row, 173].Text,
-                        TasaImpuestoAdicionalOtraMoneda3 = worksheet.Cells[row, 174].Text,
-                        MontoImpuestoSelectivoConsumoEspecificoOtraMoneda3 = worksheet.Cells[row, 175].Text,
-                        MontoImpuestoSelectivoConsumoAdvaloremOtraMoneda3 = worksheet.Cells[row, 176].Text,
-                        OtrosImpuestosAdicionalesOtraMoneda3 = worksheet.Cells[row, 177].Text,
-
-                        TipoImpuestoOtraMoneda4 = worksheet.Cells[row, 178].Text,
-                        TasaImpuestoAdicionalOtraMoneda4 = worksheet.Cells[row, 179].Text,
-                        MontoImpuestoSelectivoConsumoEspecificoOtraMoneda4 = worksheet.Cells[row, 180].Text,
-                        MontoImpuestoSelectivoConsumoAdvaloremOtraMoneda4 = worksheet.Cells[row, 181].Text,
-                        OtrosImpuestosAdicionalesOtraMoneda4 = worksheet.Cells[row, 182].Text,
-
-                        MontoTotalOtraMoneda = worksheet.Cells[row, 183].Text,
-
-
-
-                    };
-                    // Asignar valores a Detalle (Lista de Items)
-                    orden.Detalle = new List<Items>
-                    {
-                        new Items
-                        {
-                            NumeroLinea = worksheet.Cells[row, 184].Text,
-                            TipoCodigo1 = worksheet.Cells[row, 185].Text,
-                            CodigoItem1 = worksheet.Cells[row, 186].Text,
-                            TipoCodigo2 = worksheet.Cells[row, 187].Text,
-                            CodigoItem2 = worksheet.Cells[row, 188].Text,
-                            TipoCodigo3 = worksheet.Cells[row, 189].Text,
-                            CodigoItem3 = worksheet.Cells[row, 190].Text,
-                            TipoCodigo4 = worksheet.Cells[row, 191].Text,
-                            CodigoItem4 = worksheet.Cells[row, 191].Text,
-                            TipoCodigo5 = worksheet.Cells[row, 193].Text,
-                            CodigoItem5 = worksheet.Cells[row, 194].Text,
-                            IndicadorFacturacion = worksheet.Cells[row, 195].Text,
-                            IndicadorAgenteRetencionoPercepcion = worksheet.Cells[row, 196].Text,
-                            MontoITBISRetenido = worksheet.Cells[row, 197].Text,
-                            MontoISRRetenido = worksheet.Cells[row, 198].Text,
-                            NombreItem = worksheet.Cells[row, 199].Text,
-                            IndicadorBienoServicio = worksheet.Cells[row, 200].Text,
-                            DescripcionItem = worksheet.Cells[row, 201].Text,
-                            CantidadItem = worksheet.Cells[row, 202].Text,
-                            UnidadMedida = worksheet.Cells[row, 203].Text,
-                            CantidadReferencia = worksheet.Cells[row, 204].Text,
-                            UnidadReferencia = worksheet.Cells[row, 205].Text,
-                            Subcantidad1 = worksheet.Cells[row, 206].Text,
-                            CodigoSubcantidad1 = worksheet.Cells[row, 207].Text,
-                            Subcantidad2 = worksheet.Cells[row, 208].Text,
-                            CodigoSubcantidad2 = worksheet.Cells[row, 209].Text,
-                            Subcantidad3 = worksheet.Cells[row, 210].Text,
-                            CodigoSubcantidad3 = worksheet.Cells[row, 211].Text,
-                            Subcantidad4 = worksheet.Cells[row, 212].Text,
-                            CodigoSubcantidad4 = worksheet.Cells[row, 213].Text,
-                            Subcantidad5 = worksheet.Cells[row, 214].Text,
-                            CodigoSubcantidad5 = worksheet.Cells[row, 215].Text,
-                            GradosAlcohol = worksheet.Cells[row, 216].Text,
-                            PrecioUnitarioReferencia = worksheet.Cells[row, 217].Text,
-                            FechaElaboracion = worksheet.Cells[row, 218].Text,
-                            FechaVencimientoItem = worksheet.Cells[row, 219].Text,
-                            PesoNetoKilogramo = worksheet.Cells[row, 220].Text,
-                            PesoNetoMineria = worksheet.Cells[row, 221].Text,
-                            TipoAfiliacion = worksheet.Cells[row, 222].Text,
-                            Liquidacion = worksheet.Cells[row, 223].Text,
-                            PrecioUnitarioItem = worksheet.Cells[row, 224].Text,
-                            DescuentoMonto = worksheet.Cells[row, 225].Text,
-                            TipoSubDescuento1 = worksheet.Cells[row, 226].Text,
-                            SubDescuentoPorcentaje1 = worksheet.Cells[row, 227].Text,
-                            MontoSubDescuento1 = worksheet.Cells[row, 228].Text,
-                            TipoSubDescuento2 = worksheet.Cells[row, 229].Text,
-                            SubDescuentoPorcentaje2 = worksheet.Cells[row, 230].Text,
-                            MontoSubDescuento2 = worksheet.Cells[row, 231].Text,
-                            TipoSubDescuento3 = worksheet.Cells[row, 232].Text,
-                            SubDescuentoPorcentaje3 = worksheet.Cells[row, 233].Text,
-                            MontoSubDescuento3 = worksheet.Cells[row, 234].Text,
-                            TipoSubDescuento4 = worksheet.Cells[row, 235].Text,
-                            SubDescuentoPorcentaje4 = worksheet.Cells[row, 236].Text,
-                            MontoSubDescuento4 = worksheet.Cells[row, 237].Text,
-                            TipoSubDescuento5 = worksheet.Cells[row, 238].Text,
-                            SubDescuentoPorcentaje5 = worksheet.Cells[row, 239].Text,
-                            MontoSubDescuento5 = worksheet.Cells[row, 240].Text,
-                            TipoSubRecargo1 = worksheet.Cells[row, 241].Text,
-                            SubRecargoPorcentaje1 = worksheet.Cells[row, 242].Text,
-                            MontosubRecargo1 = worksheet.Cells[row, 243].Text,
-                            TipoSubRecargo2 = worksheet.Cells[row, 244].Text,
-                            SubRecargoPorcentaje2 = worksheet.Cells[row, 245].Text,
-                            MontosubRecargo2 = worksheet.Cells[row, 246].Text,
-                            TipoSubRecargo3 = worksheet.Cells[row, 247].Text,
-                            SubRecargoPorcentaje3 = worksheet.Cells[row, 248].Text,
-                            MontosubRecargo3 = worksheet.Cells[row, 249].Text,
-                            TipoSubRecargo4 = worksheet.Cells[row, 250].Text,
-                            SubRecargoPorcentaje4 = worksheet.Cells[row, 251].Text,
-                            MontosubRecargo4 = worksheet.Cells[row, 252].Text,
-                            TipoSubRecargo5 = worksheet.Cells[row, 253].Text,
-                            SubRecargoPorcentaje5 = worksheet.Cells[row, 254].Text,
-                            MontosubRecargo5 = worksheet.Cells[row, 255].Text,
-                            TipoImpuesto1 = worksheet.Cells[row, 256].Text,
-                            TipoImpuesto2 = worksheet.Cells[row, 257].Text,
-                            PrecioOtraMoneda = worksheet.Cells[row, 258].Text,
-                            DescuentoOtraMoneda = worksheet.Cells[row, 259].Text,
-                            RecargoOtraMoneda = worksheet.Cells[row, 260].Text,
-                            MontoItemOtraMoneda = worksheet.Cells[row, 261].Text,
-                            MontoItem = worksheet.Cells[row, 262].Text,
-                        }
-                    };
-
-                    // Agregar la orden a la lista
-                    ordenes.Add(orden);
-                }
             }
+
+
+            foreach (DataRow row in dt.Rows)
+            {
+
+                var orden = new OrdenECF
+                {
+
+                    Orden = row[0].ToString(),
+                    CasoPrueba = row[1].ToString(),
+                    Version = row[2].ToString(),
+                    TipoeCF = row[3].ToString(),
+                    ENCF = row[4].ToString(),
+                    FechaVencimientoSecuencia = row[5].ToString(),
+                    IndicadorNotaCredito = row[6].ToString(),
+                    IndicadorEnvioDiferido = row[7].ToString(),
+                    IndicadorMontoGravado = row[8].ToString(),
+                    TipoIngresos = row[9].ToString(),
+                    TipoPago = row[10].ToString(),
+                    FechaLimitePago = row[11].ToString(),
+                    TerminoPago = row[12].ToString(),
+                    FormaPago1 = row[13].ToString(),
+                    MontoPago1 = row[14].ToString(),
+                    FormaPago2 = row[15].ToString(),
+                    MontoPago2 = row[16].ToString(),
+                    FormaPago3 = row[17].ToString(),
+                    MontoPago3 = row[18].ToString(),
+                    FormaPago4 = row[19].ToString(),
+                    MontoPago4 = row[20].ToString(),
+                    FormaPago5 = row[21].ToString(),
+                    MontoPago5 = row[22].ToString(),
+                    FormaPago6 = row[23].ToString(),
+                    MontoPago6 = row[24].ToString(),
+                    FormaPago7 = row[25].ToString(),
+                    MontoPago7 = row[26].ToString(),
+                    TipoCuentaPago = row[27].ToString(),
+                    NumeroCuentaPago = row[28].ToString(),
+                    BancoPago = row[29].ToString(),
+                    FechaDesde = row[30].ToString(),
+                    FechaHasta = row[31].ToString(),
+                    TotalPaginas = row[32].ToString(),
+                    RNCEmisor = row[33].ToString(),
+                    RazonSocialEmisor = row[34].ToString(),
+                    NombreComercial = row[35].ToString(),
+                    Sucursal = row[36].ToString(),
+                    DireccionEmisor = row[37].ToString(),
+                    Municipio = row[38].ToString(),
+                    Provincia = row[39].ToString(),
+                    TelefonoEmisor1 = row[40].ToString(),
+                    TelefonoEmisor2 = row[41].ToString(),
+                    TelefonoEmisor3 = row[42].ToString(),
+                    CorreoEmisor = row[43].ToString(),
+                    WebSite = row[44].ToString(),
+                    ActividadEconomica = row[45].ToString(),
+                    CodigoVendedor = row[46].ToString(),
+                    NumeroFacturaInterna = row[47].ToString(),
+                    NumeroPedidoInterno = row[48].ToString(),
+                    ZonaVenta = row[49].ToString(),
+                    RutaVenta = row[50].ToString(),
+                    InformacionAdicionalEmisor = row[51].ToString(),
+                    FechaEmision = row[52].ToString(),
+                    RNCComprador = row[53].ToString(),
+                    IdentificadorExtranjero = row[54].ToString(),
+                    RazonSocialComprador = row[55].ToString(),
+                    ContactoComprador = row[56].ToString(),
+                    CorreoComprador = row[57].ToString(),
+                    DireccionComprador = row[58].ToString(),
+                    MunicipioComprador = row[59].ToString(),
+                    ProvinciaComprador = row[60].ToString(),
+                    PaisComprador = row[61].ToString(),
+                    FechaEntrega = row[62].ToString(),
+                    ContactoEntrega = row[63].ToString(),
+                    DireccionEntrega = row[64].ToString(),
+                    TelefonoAdicional = row[65].ToString(),
+                    FechaOrdenCompra = row[66].ToString(),
+                    NumeroOrdenCompra = row[67].ToString(),
+                    CodigoInternoComprador = row[68].ToString(),
+                    ResponsablePago = row[69].ToString(),
+                    InformacionAdicionalComprador = row[70].ToString(),
+                    FechaEmbarque = row[71].ToString(),
+                    NumeroEmbarque = row[72].ToString(),
+                    NumeroContenedor = row[73].ToString(),
+                    NumeroReferencia = row[74].ToString(),
+                    NombrePuertoEmbarque = row[75].ToString(),
+                    CondicionesEntrega = row[76].ToString(),
+                    TotalFob = row[77].ToString(),
+                    Seguro = row[78].ToString(),
+                    Flete = row[79].ToString(),
+                    OtrosGastos = row[80].ToString(),
+                    TotalCif = row[81].ToString(),
+                    RegimenAduanero = row[82].ToString(),
+                    NombrePuertoSalida = row[83].ToString(),
+                    NombrePuertoDesembarque = row[84].ToString(),
+                    PesoBruto = row[85].ToString(),
+                    PesoNeto = row[86].ToString(),
+                    UnidadPesoBruto = row[87].ToString(),
+                    UnidadPesoNeto = row[88].ToString(),
+                    CantidadBulto = row[89].ToString(),
+                    UnidadBulto = row[90].ToString(),
+                    VolumenBulto = row[91].ToString(),
+                    UnidadVolumen = row[92].ToString(),
+                    ViaTransporte = row[93].ToString(),
+                    PaisOrigen = row[94].ToString(),
+                    DireccionDestino = row[95].ToString(),
+                    PaisDestino = row[96].ToString(),
+                    RNCIdentificacionCompaniaTransportista = row[97].ToString(),
+                    NombreCompaniaTransportista = row[98].ToString(),
+                    NumeroViaje = row[99].ToString(),
+                    Conductor = row[100].ToString(),
+                    DocumentoTransporte = row[101].ToString(),
+                    Ficha = row[102].ToString(),
+                    Placa = row[103].ToString(),
+                    RutaTransporte = row[104].ToString(),
+                    ZonaTransporte = row[105].ToString(),
+                    NumeroAlbaran = row[106].ToString(),
+                    MontoGravadoTotal = row[107].ToString(),
+                    MontoGravadoI1 = row[108].ToString(),
+                    MontoGravadoI2 = row[109].ToString(),
+                    MontoGravadoI3 = row[110].ToString(),
+                    MontoExento = row[111].ToString(),
+                    ITBIS1 = row[112].ToString(),
+                    ITBIS2 = row[113].ToString(),
+                    ITBIS3 = row[114].ToString(),
+                    TotalITBIS = row[115].ToString(),
+                    TotalITBIS1 = row[116].ToString(),
+                    TotalITBIS2 = row[117].ToString(),
+                    TotalITBIS3 = row[118].ToString(),
+                    MontoImpuestoAdicional = row[119].ToString(),
+                    //hasta aqui esta bien
+
+                    TipoImpuesto1 = row[120].ToString(),
+                    TasaImpuestoAdicional1 = row[121].ToString(),
+                    MontoImpuestoSelectivoConsumoEspecifico1 = row[122].ToString(),
+                    MontoImpuestoSelectivoConsumoAdvalorem1 = row[123].ToString(),
+                    OtrosImpuestosAdicionales1 = row[124].ToString(),
+
+                    TipoImpuesto2 = row[125].ToString(),
+                    TasaImpuestoAdicional2 = row[126].ToString(),
+                    MontoImpuestoSelectivoConsumoEspecifico2 = row[127].ToString(),
+                    MontoImpuestoSelectivoConsumoAdvalorem2 = row[128].ToString(),
+                    OtrosImpuestosAdicionales2 = row[129].ToString(),
+
+                    TipoImpuesto3 = row[130].ToString(),
+                    TasaImpuestoAdicional3 = row[131].ToString(),
+                    MontoImpuestoSelectivoConsumoEspecifico3 = row[132].ToString(),
+                    MontoImpuestoSelectivoConsumoAdvalorem3 = row[133].ToString(),
+                    OtrosImpuestosAdicionales3 = row[134].ToString(),
+
+                    TipoImpuesto4 = row[135].ToString(),
+                    TasaImpuestoAdicional4 = row[136].ToString(),
+                    MontoImpuestoSelectivoConsumoEspecifico4 = row[137].ToString(),
+                    MontoImpuestoSelectivoConsumoAdvalorem4 = row[138].ToString(),
+                    OtrosImpuestosAdicionales4 = row[139].ToString(),
+
+
+                    MontoTotal = row[140].ToString(),
+                    MontoNoFacturable = row[141].ToString(),
+                    MontoPeriodo = row[142].ToString(),
+                    SaldoAnterior = row[143].ToString(),
+                    MontoAvancePago = row[144].ToString(),
+                    ValorPagar = row[145].ToString(),
+                    TotalITBISRetenido = row[146].ToString(),
+                    TotalISRRetencion = row[147].ToString(),
+                    TotalITBISPercepcion = row[148].ToString(),
+                    TotalISRPercepcion = row[149].ToString(),
+                    TipoMoneda = row[150].ToString(),
+                    TipoCambio = row[151].ToString(),
+
+                    MontoGravadoTotalOtraMoneda = row[152].ToString(),
+                    MontoGravado1OtraMoneda = row[153].ToString(),
+                    MontoGravado2OtraMoneda = row[154].ToString(),
+                    MontoGravado3OtraMoneda = row[155].ToString(),
+                    MontoExentoOtraMoneda = row[156].ToString(),
+
+                    TotalITBISOtraMoneda = row[157].ToString(),
+                    TotalITBIS1OtraMoneda = row[158].ToString(),
+                    TotalITBIS2OtraMoneda = row[159].ToString(),
+                    TotalITBIS3OtraMoneda = row[160].ToString(),
+                    MontoImpuestoAdicionalOtraMoneda = row[161].ToString(),
+
+                    TipoImpuestoOtraMoneda1 = row[162].ToString(),
+                    TasaImpuestoAdicionalOtraMoneda1 = row[163].ToString(),
+                    MontoImpuestoSelectivoConsumoEspecificoOtraMoneda1 = row[164].ToString(),
+                    MontoImpuestoSelectivoConsumoAdvaloremOtraMoneda1 = row[165].ToString(),
+                    OtrosImpuestosAdicionalesOtraMoneda1 = row[166].ToString(),
+
+                    TipoImpuestoOtraMoneda2 = row[167].ToString(),
+                    TasaImpuestoAdicionalOtraMoneda2 = row[168].ToString(), //hasta aqui
+                    MontoImpuestoSelectivoConsumoEspecificoOtraMoneda2 = row[169].ToString(),
+                    MontoImpuestoSelectivoConsumoAdvaloremOtraMoneda2 = row[170].ToString(),
+                    OtrosImpuestosAdicionalesOtraMoneda2 = row[171].ToString(),
+
+                    TipoImpuestoOtraMoneda3 = row[172].ToString(),
+                    TasaImpuestoAdicionalOtraMoneda3 = row[173].ToString(),
+                    MontoImpuestoSelectivoConsumoEspecificoOtraMoneda3 = row[174].ToString(),
+                    MontoImpuestoSelectivoConsumoAdvaloremOtraMoneda3 = row[175].ToString(),
+                    OtrosImpuestosAdicionalesOtraMoneda3 = row[176].ToString(),
+
+                    TipoImpuestoOtraMoneda4 = row[177].ToString(),
+                    TasaImpuestoAdicionalOtraMoneda4 = row[178].ToString(),
+                    MontoImpuestoSelectivoConsumoEspecificoOtraMoneda4 = row[179].ToString(),
+                    MontoImpuestoSelectivoConsumoAdvaloremOtraMoneda4 = row[180].ToString(),
+                    OtrosImpuestosAdicionalesOtraMoneda4 = row[181].ToString(),
+
+                    MontoTotalOtraMoneda = row[182].ToString(),
+                };
+
+                orden.Detalle = new List<Items>();
+                int columnasInicio = 183;
+                int columnasPorItem = 80; 
+
+
+                for (int i = 0; i < 62; i++)
+                {
+                    orden.Detalle.Add(
+                            new Items
+                            {
+                                NumeroLinea = row[columnasInicio].ToString(),
+                                TipoCodigo1 = row[columnasInicio + 1].ToString(),
+                                CodigoItem1 = row[columnasInicio + 2].ToString(),
+                                TipoCodigo2 = row[columnasInicio +3].ToString(),
+                                CodigoItem2 = row[columnasInicio + 4].ToString(),
+                                TipoCodigo3 = row[columnasInicio + 5].ToString(),
+                                CodigoItem3 = row[columnasInicio + 6].ToString(),
+                                TipoCodigo4 = row[columnasInicio + 7].ToString(),
+                                CodigoItem4 = row[columnasInicio + 8].ToString(),
+                                TipoCodigo5 = row[columnasInicio + 9].ToString(),
+                                CodigoItem5 = row[columnasInicio + 10].ToString(),
+                                IndicadorFacturacion = row[columnasInicio + 11].ToString(),
+                                IndicadorAgenteRetencionoPercepcion = row[columnasInicio + 12].ToString(),
+                                MontoITBISRetenido = row[columnasInicio + 13].ToString(),
+                                MontoISRRetenido = row[columnasInicio + 14].ToString(),
+                                NombreItem = row[columnasInicio + 15].ToString(),
+                                IndicadorBienoServicio = row[columnasInicio + 16].ToString(),
+                                DescripcionItem = row[columnasInicio + 17].ToString(),
+                                CantidadItem = row[columnasInicio + 18].ToString(),
+                                UnidadMedida = row[columnasInicio + 19].ToString(),
+                                CantidadReferencia = row[columnasInicio + 20].ToString(),
+                                UnidadReferencia = row[columnasInicio + 21].ToString(),
+                                Subcantidad1 = row[columnasInicio + 22].ToString(),
+                                CodigoSubcantidad1 = row[columnasInicio + 23].ToString(),
+                                Subcantidad2 = row[columnasInicio + 24].ToString(),
+                                CodigoSubcantidad2 = row[columnasInicio + 25].ToString(),
+                                Subcantidad3 = row[columnasInicio + 26].ToString(),
+                                CodigoSubcantidad3 = row[columnasInicio + 27].ToString(),
+                                Subcantidad4 = row[columnasInicio + 28].ToString(),
+                                CodigoSubcantidad4 = row[columnasInicio = 29].ToString(),
+                                Subcantidad5 = row[columnasInicio + 30].ToString(),
+                                CodigoSubcantidad5 = row[columnasInicio + 31].ToString(),
+                                GradosAlcohol = row[columnasInicio + 32].ToString(),
+                                PrecioUnitarioReferencia = row[columnasInicio + 33].ToString(),
+                                FechaElaboracion = row[columnasInicio + 34].ToString(),
+                                FechaVencimientoItem = row[columnasInicio = 35].ToString(),
+                                PesoNetoKilogramo = row[columnasInicio + 36].ToString(),
+                                PesoNetoMineria = row[columnasInicio + 37].ToString(),
+                                TipoAfiliacion = row[columnasInicio + 38].ToString(),
+                                Liquidacion = row[columnasInicio + 39].ToString(),
+                                PrecioUnitarioItem = row[columnasInicio + 40].ToString(),
+                                DescuentoMonto = row[columnasInicio + 41].ToString(),
+                                TipoSubDescuento1 = row[columnasInicio + 42].ToString(),
+                                SubDescuentoPorcentaje1 = row[columnasInicio + 43].ToString(),
+                                MontoSubDescuento1 = row[columnasInicio + 44].ToString(),
+                                TipoSubDescuento2 = row[columnasInicio + 45].ToString(),
+                                SubDescuentoPorcentaje2 = row[columnasInicio + 46].ToString(),
+                                MontoSubDescuento2 = row[columnasInicio + 47].ToString(),
+                                TipoSubDescuento3 = row[columnasInicio + 48].ToString(),
+                                SubDescuentoPorcentaje3 = row[columnasInicio + 49].ToString(),
+                                MontoSubDescuento3 = row[columnasInicio + 50].ToString(),
+                                TipoSubDescuento4 = row[columnasInicio + 51].ToString(),
+                                SubDescuentoPorcentaje4 = row[columnasInicio + 52].ToString(),
+                                MontoSubDescuento4 = row[columnasInicio + 53].ToString(),
+                                TipoSubDescuento5 = row[columnasInicio + 54].ToString(),
+                                SubDescuentoPorcentaje5 = row[columnasInicio + 55].ToString(),
+                                MontoSubDescuento5 = row[columnasInicio + 56].ToString(),
+                                RecargoMonto = row[columnasInicio + 57].ToString(),
+                                TipoSubRecargo1 = row[columnasInicio + 58].ToString(),
+                                SubRecargoPorcentaje1 = row[columnasInicio + 59].ToString(),
+                                MontosubRecargo1 = row[columnasInicio + 60].ToString(),
+                                TipoSubRecargo2 = row[columnasInicio + 61].ToString(),
+                                SubRecargoPorcentaje2 = row[columnasInicio + 62].ToString(),
+                                MontosubRecargo2 = row[columnasInicio + 63].ToString(),
+                                TipoSubRecargo3 = row[columnasInicio + 64].ToString(),
+                                SubRecargoPorcentaje3 = row[columnasInicio + 65].ToString(),
+                                MontosubRecargo3 = row[columnasInicio + 66].ToString(),
+                                TipoSubRecargo4 = row[columnasInicio + 67].ToString(),
+                                SubRecargoPorcentaje4 = row[columnasInicio + 68].ToString(),
+                                MontosubRecargo4 = row[columnasInicio + 69].ToString(),
+                                TipoSubRecargo5 = row[columnasInicio + 70].ToString(),
+                                SubRecargoPorcentaje5 = row[columnasInicio + 71].ToString(),
+                                MontosubRecargo5 = row[columnasInicio + 72].ToString(),
+                                TipoImpuesto1 = row[columnasInicio + 73].ToString(),
+                                TipoImpuesto2 = row[columnasInicio + 74].ToString(),
+                                PrecioOtraMoneda = row[columnasInicio + 75].ToString(),
+                                DescuentoOtraMoneda = row[columnasInicio + 76].ToString(),
+                                RecargoOtraMoneda = row[columnasInicio + 77].ToString(),
+                                MontoItemOtraMoneda = row[columnasInicio + 78].ToString(),
+                                MontoItem = row[columnasInicio + 79].ToString(),
+                            });
+
+                    columnasInicio += columnasPorItem; // Aumentar el índice de columnas para el siguiente item
+                };
+
+            // Agregar la orden a la lista
+            ordenes.Add(orden);
+
+        }
+
 
             return ordenes;
         }
-    }
+
 }
+
+
+
+}
+
+
