@@ -205,5 +205,98 @@ namespace ConvertirJson.Mapeos
 
         //Numero de cada linea
         public List<Items> Detalle { get; set; } = new List<Items>();
+
+        public string NumeroSubTotal { get; set; }
+        public string DescripcionSubtotal { get; set; }
+        public string OrdenPie { get; set; }
+        public string SubTotalMontoGravadoTotal { get; set; }
+        public string SubTotalMontoGravadoI1 { get; set; }
+        public string SubTotalMontoGravadoI2 { get; set; }
+        public string SubTotalMontoGravadoI3 { get; set; }
+        public string SubTotaITBIS { get; set; }
+        public string SubTotaITBIS1 { get; set; }
+        public string SubTotaITBIS2 { get; set; }
+        public string SubTotaITBIS3 { get; set; }
+        public string SubTotalImpuestoAdicional { get; set; }
+        public string SubTotalExento { get; set; }
+        public string MontoSubTotal { get; set; }
+        public string Lineas { get; set; }
+
+        public string NumeroLineaDoR1 { get; set; }
+        public string TipoAjuste1 { get; set; }
+        public string IndicadorNorma10071 { get; set; }
+        public string DescripcionDescuentooRecargo1 { get; set; }
+        public string TipoValor1 { get; set; }
+        public string ValorDescuentooRecargo { get; set; }
+        public string MontoDescuentooRecargo1 { get; set; }
+        public string MontoDescuentooRecargoOtraMoneda1 { get; set; }
+        public string IndicadorFacturacionDescuentooRecargo1 { get; set; }
+
+        public string NumeroLineaDoR2 { get; set; }
+        public string TipoAjuste2 { get; set; }
+        public string IndicadorNorma10072 { get; set; }
+        public string DescripcionDescuentooRecargo2 { get; set; }
+        public string TipoValor2 { get; set; }
+        public string ValorDescuentooRecargo2 { get; set; }
+        public string MontoDescuentooRecargo2 { get; set; }
+        public string MontoDescuentooRecargoOtraMoneda2 { get; set; }
+        public string IndicadorFacturacionDescuentooRecargo2 { get; set; }
+
+        public string PaginaNo1 { get; set; }
+        public string NoLineaDesde1 { get; set; }
+        public string NoLineaHasta1 { get; set; }
+        public string SubtotalMontoGravadoPagina1 { get; set; }
+        public string SubtotalMontoGravado1Pagina1 { get; set; }
+        public string SubtotalMontoGravado2Pagina1 { get; set; }
+        public string SubtotalMontoGravado3Pagina1 { get; set; }
+        public string SubtotalExentoPagina1 { get; set; }
+        public string SubtotalItbisPagina1 { get; set; }
+        public string SubtotalItbis1Pagina1 { get; set; }
+        public string SubtotalItbis2Pagina1 { get; set; }
+        public string SubtotalItbis3Pagina1 { get; set; }
+        public string SubtotalImpuestoAdicionalPagina1 { get; set; }
+        public string SubtotalImpuestoAdicionalPaginaTabla1 { get; set; }
+        public string SubtotalImpuestoSelectivoConsumoEspecificoPagina1 { get; set; }
+        public string SubtotalOtrosImpuesto1 { get; set; }
+        public string MontoSubtotalPagina1 { get; set; }
+        public string SubtotalMontoNoFacturablePagina1 { get; set; }
+
+        public string PaginaNo2 { get; set; }
+        public string NoLineaDesde2 { get; set; }
+        public string NoLineaHasta2 { get; set; }
+        public string SubtotalMontoGravadoPagina2 { get; set; }
+        public string SubtotalMontoGravado1Pagina2 { get; set; }
+        public string SubtotalMontoGravado2Pagina2 { get; set; }
+        public string SubtotalMontoGravado3Pagina2 { get; set; }
+        public string SubtotalExentoPagina2 { get; set; }
+        public string SubtotalItbisPagina2 { get; set; }
+        public string SubtotalItbis1Pagina2 { get; set; }
+        public string SubtotalItbis2Pagina2 { get; set; }
+        public string SubtotalItbis3Pagina2 { get; set; }
+        public string SubtotalImpuestoAdicionalPagina2 { get; set; }
+
+        //public string SubtotalImpuestoAdicionalPaginaTabla2 { get; set; }
+
+        public string SubtotalImpuestoSelectivoConsumoEspecificoPagina2 { get; set; }
+        public string SubtotalOtrosImpuesto2 { get; set; }
+        public string MontoSubtotalPagina2 { get; set; }
+        public string SubtotalMontoNoFacturablePagina2 { get; set; }
+
+        public string NCFModificado { get; set; }
+        public string RNCOtroContribuyente { get; set; }
+        public string FechaNCFModificado { get; set; }
+        public string CodigoModificacion { get; set; }
+        public string RazonModificacion { get; set; }
+
+
+
+
+
+
+
+
+
+
+
     }
 }

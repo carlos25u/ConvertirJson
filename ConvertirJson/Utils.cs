@@ -3,6 +3,7 @@ using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing.Drawing2D;
 using System.Linq;
 
 
@@ -268,6 +269,89 @@ namespace ConvertirJson
                     OtrosImpuestosAdicionalesOtraMoneda4 = row[181].ToString(),
 
                     MontoTotalOtraMoneda = row[182].ToString(),
+
+                    //Campos despues del detalle 
+
+                    NumeroSubTotal = row[5143].ToString(),
+                    DescripcionSubtotal = row[5144].ToString(),
+                    OrdenPie = row[5145].ToString(),
+                    SubTotalMontoGravadoTotal = row[5146].ToString(),
+                    SubTotalMontoGravadoI1 = row[5147].ToString(),
+                    SubTotalMontoGravadoI2 = row[5148].ToString(),
+                    SubTotalMontoGravadoI3 = row[5149].ToString(),
+                    SubTotaITBIS = row[5150].ToString(),
+                    SubTotaITBIS1 = row[5151].ToString(),
+                    SubTotaITBIS2 = row[5152].ToString(),
+                    SubTotaITBIS3 = row[5153].ToString(),
+                    SubTotalImpuestoAdicional = row[5154].ToString(),
+                    SubTotalExento = row[5155].ToString(),
+                    MontoSubTotal = row[5156].ToString(),
+                    Lineas = row[5157].ToString(),
+
+                    NumeroLineaDoR1 = row[5158].ToString(),
+                    TipoAjuste1 = row[5159].ToString(),
+                    IndicadorNorma10071 = row[5160].ToString(),
+                    DescripcionDescuentooRecargo1 = row[5161].ToString(),
+                    TipoValor1 = row[5162].ToString(),
+                    ValorDescuentooRecargo = row[5163].ToString(),
+                    MontoDescuentooRecargo1 = row[5164].ToString(),
+                    MontoDescuentooRecargoOtraMoneda1 = row[5165].ToString(),
+                    IndicadorFacturacionDescuentooRecargo1 = row[5166].ToString(),
+
+                    NumeroLineaDoR2 = row[5167].ToString(),
+                    TipoAjuste2 = row[5168].ToString(),
+                    IndicadorNorma10072 = row[5169].ToString(),
+                    DescripcionDescuentooRecargo2 = row[5170].ToString(),
+                    TipoValor2 = row[5171].ToString(),
+                    ValorDescuentooRecargo2 = row[5172].ToString(),
+                    MontoDescuentooRecargo2 = row[5173].ToString(),
+                    MontoDescuentooRecargoOtraMoneda2 = row[5174].ToString(),
+                    IndicadorFacturacionDescuentooRecargo2 = row[5175].ToString(),
+
+                    PaginaNo1 = row[5176].ToString(),
+                    NoLineaDesde1 = row[5177].ToString(),
+                    NoLineaHasta1 = row[5178].ToString(),
+                    SubtotalMontoGravadoPagina1 = row[5179].ToString(),
+                    SubtotalMontoGravado1Pagina1 = row[5180].ToString(),
+                    SubtotalMontoGravado2Pagina1 = row[5181].ToString(),
+                    SubtotalMontoGravado3Pagina1 = row[5182].ToString(),
+                    SubtotalExentoPagina1 = row[5183].ToString(),
+                    SubtotalItbisPagina1 = row[5184].ToString(),
+                    SubtotalItbis1Pagina1 = row[5185].ToString(),
+                    SubtotalItbis2Pagina1 = row[5186].ToString(),
+                    SubtotalItbis3Pagina1 = row[5187].ToString(),
+                    SubtotalImpuestoAdicionalPagina1 = row[5188].ToString(),
+                    SubtotalImpuestoAdicionalPaginaTabla1 = row[5189].ToString(),
+                    SubtotalImpuestoSelectivoConsumoEspecificoPagina1 = row[5190].ToString(),
+                    SubtotalOtrosImpuesto1 = row[5191].ToString(),
+                    MontoSubtotalPagina1 = row[5192].ToString(),
+                    SubtotalMontoNoFacturablePagina1 = row[5193].ToString(),
+
+                    PaginaNo2 = row[5194].ToString(),
+                    NoLineaDesde2 = row[5195].ToString(),
+                    NoLineaHasta2 = row[5196].ToString(),
+                    SubtotalMontoGravadoPagina2 = row[5197].ToString(),
+                    SubtotalMontoGravado1Pagina2 = row[5198].ToString(),
+                    SubtotalMontoGravado2Pagina2 = row[5199].ToString(),
+                    SubtotalMontoGravado3Pagina2 = row[5200].ToString(),
+                    SubtotalExentoPagina2 = row[5201].ToString(),
+                    SubtotalItbisPagina2 = row[5202].ToString(),
+                    SubtotalItbis1Pagina2 = row[5203].ToString(),
+                    SubtotalItbis2Pagina2 = row[5204].ToString(),
+                    SubtotalItbis3Pagina2 = row[5205].ToString(),
+                    SubtotalImpuestoAdicionalPagina2 = row[5206].ToString(),
+                    // SubtotalImpuestoAdicionalPaginaTabla2 = row[5207].ToString(),
+                    SubtotalImpuestoSelectivoConsumoEspecificoPagina2 = row[5207].ToString(),
+                    SubtotalOtrosImpuesto2 = row[5208].ToString(),
+                    MontoSubtotalPagina2 = row[5209].ToString(),
+                    SubtotalMontoNoFacturablePagina2 = row[5210].ToString(),
+
+                    NCFModificado = row[5211].ToString(),
+                    RNCOtroContribuyente = row[5212].ToString(),
+                    FechaNCFModificado = row[5213].ToString(),
+                    CodigoModificacion = row[5214].ToString(),
+                    RazonModificacion = row[5215].ToString(),
+
                 };
 
                 orden.Detalle = new List<Items>();
@@ -367,13 +451,13 @@ namespace ConvertirJson
                 // Agregar la orden a la lista
                 ordenes.Add(orden);
 
-        }
+            }
 
 
             return ordenes;
         }
 
-}
+    }
 
 
 
