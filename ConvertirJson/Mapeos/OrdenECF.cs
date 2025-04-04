@@ -204,7 +204,7 @@ namespace ConvertirJson.Mapeos
         public string MontoTotalOtraMoneda { get; set; }
 
         //Numero de cada linea
-        public List<Items> Detalle { get; set; } = new List<Items>();
+        public List<Items> Item { get; set; } = new List<Items>();
 
         public string NumeroSubTotal { get; set; }
         public string DescripcionSubtotal { get; set; }

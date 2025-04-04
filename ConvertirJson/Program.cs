@@ -31,13 +31,13 @@ class Program
             if (jsonToken is JArray)
             {
                 // Si es un array, lo envolvemos en un objeto con un nodo ráiz
-                JObject rootObject = new JObject { ["Items"] = jsonToken };
-                xmlDoc = JsonConvert.DeserializeXmlNode(rootObject.ToString(), "Root");
+                JObject rootObject = new JObject { ["Encabezado"] = jsonToken };
+                xmlDoc = JsonConvert.DeserializeXmlNode(rootObject.ToString(), "ECF");
             }
             else
             {
                 // Si es un objeto normal, lo convertimos directamente
-                xmlDoc = JsonConvert.DeserializeXmlNode(jsonToken.ToString(), "Root");
+                xmlDoc = JsonConvert.DeserializeXmlNode(jsonToken.ToString(), "ECF");
             }
 
             string xmlFilePath = @"C:\\Users\\Carlo\\OneDrive\\Escritorio\\ProcesoCert.xml";

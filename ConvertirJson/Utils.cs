@@ -354,13 +354,13 @@ namespace ConvertirJson
 
                 };
 
-                orden.Detalle = new List<Items>();
+                orden.Item = new List<Items>();
                 int columnasInicio = 183;
                 int columnasPorItem = 80;
 
                 for (int i = 0; i < 62; i++)
                 {
-                    orden.Detalle.Add(
+                    orden.Item.Add(
                         new Items
                         {
                             NumeroLinea = row[columnasInicio].ToString(),
