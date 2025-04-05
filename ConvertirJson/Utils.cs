@@ -54,8 +54,7 @@ namespace ConvertirJson
             return table;
         }
 
-
-        public static List<OrdenECF> CargarDatosDesdeExcel(string filePath)
+        public static List<OrdenECF> CargarDatosDesdeExcelECF(string filePath,  int indice)
         {
             var ordenes = new List<OrdenECF>();
 
@@ -66,10 +65,8 @@ namespace ConvertirJson
 
             using (ExcelPackage package = new ExcelPackage(new FileInfo(filePath)))
             {
-                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[indice];
                 dt = WorksheetToDataTable(worksheet);
-
-
             }
 
 
@@ -465,10 +462,87 @@ namespace ConvertirJson
             return ordenes;
         }
 
+        public static List<OrderRFCE> CargarDatosDesdeExcelRFCE(string filePath,  int indice)
+        {
+            var ordenes = new List<OrderRFCE>();
+            
+            FileInfo fileInfo = new FileInfo(filePath);
+            DataTable dt = new DataTable();
+
+            using (ExcelPackage package = new ExcelPackage(new FileInfo(filePath)))
+            {
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[indice];
+                dt = WorksheetToDataTable(worksheet);
+            }
+
+            foreach (DataRow row in dt.Rows)
+            {
+                var orden = new OrderRFCE
+                {
+                    CasoPrueba = row[0].ToString(),
+                    Version = row[1].ToString(),    
+                    TipoeCF = row[2].ToString(),
+                    ENCF = row[3].ToString(),
+                    TipoIngresos = row[4].ToString(),
+                    TipoPago = row[5].ToString(),
+                    FormaPago1 = row[6].ToString(),
+                    MontoPago1 = row[7].ToString(),
+                    FormaPago2 = row[8].ToString(),
+                    MontoPago2 = row[9].ToString(),
+                    FormaPago3 = row[10].ToString(),
+                    MontoPago3 = row[11].ToString(),
+                    FormaPago4 = row[12].ToString(),
+                    MontoPago4 = row[13].ToString(),
+                    FormaPago5 = row[14].ToString(),
+                    MontoPago5 = row[15].ToString(),
+                    FormaPago6 = row[16].ToString(),
+                    MontoPago6 = row[17].ToString(),
+                    FormaPago7 = row[18].ToString(),
+                    MontoPago7 = row[19].ToString(),
+                    RNCEmisor = row[20].ToString(),
+                    RazonSocialEmisor = row[21].ToString(),
+                    FechaEmision = row[22].ToString(),
+                    RNCComprador = row[23].ToString(),
+                    IdentificadorExtranjero = row[24].ToString(),
+                    RazonSocialComprador = row[25].ToString(),
+                    MontoGravadoTotal = row[26].ToString(),
+                    MontoGravadoI1 = row[27].ToString(),
+                    MontoGravadoI2 = row[28].ToString(),
+                    MontoGravadoI3 = row[29].ToString(),
+                    MontoExento = row[30].ToString(),
+                    TotalITBIS = row[31].ToString(),
+                    TotalITBIS1 = row[32].ToString(),
+                    TotalITBIS2 = row[33].ToString(),
+                    TotalITBIS3 = row[34].ToString(),
+                    MontoImpuestoAdicional = row[35].ToString(),
+                    TipoImpuesto1 = row[36].ToString(),
+                    MontoImpuestoSelectivoConsumoEspecifico1 = row[37].ToString(),
+                    MontoImpuestoSelectivoConsumoAdvalorem1 = row[38].ToString(),
+                    OtrosImpuestosAdicionales1 = row[39].ToString(),
+                    TipoImpuesto2 = row[40].ToString(),
+                    MontoImpuestoSelectivoConsumoEspecifico2 = row[41].ToString(),
+                    MontoImpuestoSelectivoConsumoAdvalorem2 = row[42].ToString(),
+                    OtrosImpuestosAdicionales2 = row[43].ToString(),
+                    TipoImpuesto3 = row[44].ToString(),
+                    MontoImpuestoSelectivoConsumoEspecifico3 = row[45].ToString(),
+                    MontoImpuestoSelectivoConsumoAdvalorem3 = row[46].ToString(),
+                    OtrosImpuestosAdicionales3 = row[47].ToString(),
+                    TipoImpuesto4 = row[48].ToString(),
+                    MontoImpuestoSelectivoConsumoEspecifico4 = row[49].ToString(),
+                    MontoImpuestoSelectivoConsumoAdvalorem4 = row[50].ToString(),
+                    OtrosImpuestosAdicionales4 = row[51].ToString(),
+                    MontoTotal = row[52].ToString(),
+                    MontoNoFacturable = row[53].ToString(),
+                    MontoPeriodo = row[54].ToString(),
+                    CodigoSeguridadeCF = row[55].ToString(),
+                };
+                
+                ordenes.Add(orden);
+            }
+            
+            return ordenes;
+        }
     }
-
-
-
 }
 
 

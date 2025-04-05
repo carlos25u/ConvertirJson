@@ -1,11 +1,10 @@
-﻿using System;
-using System.IO;
+﻿using System.Xml;
+using OfficeOpenXml;
+using System.Xml.Linq;
+using ConvertirJson;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Xml;
-using ConvertirJson;
-using OfficeOpenXml;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+
 
 class Program
 {
@@ -13,44 +12,35 @@ class Program
     {
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-        //string rutaExcel = @"C:\\Users\\Carlo\\OneDrive\\Escritorio\\ProcesoCert.xlsx";
-        string rutaExcel = "/Users/jhonalbert/Downloads/ProcesoCert.xlsx";
-        var lista = Utils.CargarDatosDesdeExcel(rutaExcel);
+        string rutaExcel = "/Users/jhonalbert/Downloads/131918476-04042025134740.xlsx";
+        var lista = Utils.CargarDatosDesdeExcelRFCE(rutaExcel, 1);
 
         string json = JsonConvert.SerializeObject(lista, Newtonsoft.Json.Formatting.Indented);
 
         try
         {
-            // Convertir JSON en un objeto JArray
             JArray jsonArray = JArray.Parse(json);
+            Console.WriteLine(jsonArray[0]);
+            
+            string rutaSalida = "/Users/jhonalbert/Downloads/ArchivosGenerados/";
+            Directory.CreateDirectory(rutaSalida);
+            int contador = 0;
 
-            int contador = 1;
-            foreach (var item in jsonArray)
+            foreach (JToken jToken in jsonArray)
             {
-                // Filtrar los valores "#e" y eliminar "Detalle"
-                var filteredItem = FilterJson(item);
-                if (filteredItem.IsNullOrEmpty()) continue;
-
-                // Crear objeto raíz por cada encabezado
-                JObject root = new JObject { ["Encabezado"] = filteredItem };
-
-                // Convertir a XML
-                XmlDocument xmlDoc = JsonConvert.DeserializeXmlNode(root.ToString(), "ECF");
-
+                XmlDocument xmlDoc = JsonConvert.DeserializeXmlNode(jToken.ToString(), "root");
+                
                 // Formatear XML con indentación
                 using (var stringWriter = new StringWriter())
                 using (var xmlTextWriter = new XmlTextWriter(stringWriter))
                 {
                     xmlTextWriter.Formatting = System.Xml.Formatting.Indented;
                     xmlDoc.WriteTo(xmlTextWriter);
-                    string formattedXml = stringWriter.ToString();
+                    string xmlString = stringWriter.ToString();
 
-                    // string ruta = @"C:\\Users\\Carlo\\OneDrive\\Escritorio\\XmlGenerados";
-                    string ruta = @"/Users/jhonalbert/Downloads/XmlGenerados";
-                    string nombreArchivo = $"ProcesoCert_{contador}";
-                    string xmlFilePath = Path.Combine(ruta, $"{nombreArchivo}.xml");
-                    File.WriteAllText(xmlFilePath, formattedXml);
-                    Console.WriteLine($"Archivo generado: {xmlFilePath}");
+                 
+                    string nombreArchivo = Path.Combine(rutaSalida, $"archivo_{contador}.xml");
+                    File.WriteAllText(nombreArchivo, xmlString);
                 }
 
                 contador++;
@@ -62,6 +52,12 @@ class Program
         {
             Console.WriteLine("Ocurrió un error: " + ex.Message);
         }
+    }
+
+    static XElement XmlIfNotEmpty(string tag, JToken token)
+    {
+        if (token == null || string.IsNullOrWhiteSpace(token.ToString())) return null;
+        return new XElement(tag, token.ToString());
     }
 
     static JToken FilterJson(JToken token)
